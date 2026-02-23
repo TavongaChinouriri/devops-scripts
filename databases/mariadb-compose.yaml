@@ -1,0 +1,34 @@
+services:
+  db:
+    image: mariadb:11.4.2
+    container_name: maria-deeds
+    restart: unless-stopped
+
+    environment:
+      MYSQL_ROOT_PASSWORD: dokumaroot
+      MYSQL_DATABASE: deeds
+      MYSQL_USER: dokumauser
+      MYSQL_PASSWORD: dokuma123!
+
+    ports:
+      - "3306:3306"
+
+    volumes:
+      - mariadb-data:/var/lib/mysql
+
+    networks:
+      - deeds-net
+
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+
+networks:
+  deeds-net:
+    external: true
+
+volumes:
+  mariadb-data:
